@@ -27,11 +27,7 @@ h2{
   color:#FF00ff;
 
 }
-.buttonStyle:hover {
- background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #7a7a7a), color-stop(1, #7a7a7a) );
-	background:-moz-linear-gradient( center top, #7a7a7a 5%, #7a7a7a 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#7a7a7a', endColorstr='#7a7a7a');
-}
+
 .buttonStyle {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #ffffff) );
 	background:-moz-linear-gradient( center top, #ffffff 5%, #ffffff 100% );
@@ -56,4 +52,9 @@ h2{
 }.classname:active {
 	position:relative;
 	top:1px;
+}
+.buttonStyle:hover {
+ background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #7a7a7a), color-stop(1, #7a7a7a) );
+	background:-moz-linear-gradient( center top, #7a7a7a 5%, #7a7a7a 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#7a7a7a', endColorstr='#7a7a7a');
 }

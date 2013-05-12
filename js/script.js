@@ -2,7 +2,7 @@ var canvas = document.getElementById('surface');
 var context = canvas.getContext('2d');
 var data;
 var font = "Arial";
-var colorSkew = 18;
+var colorSkew = 360/4;
 console.log("hiya");
 
 
@@ -23,8 +23,21 @@ function addListeners(){
    var button = document.getElementById("button");
    // add onclick event
    button.onclick = function() {
-        alert("thankyou");
+      reloadData();
    }
+}
+
+function reloadData(){
+  console.log("reload data");
+  var url = 'https://spreadsheets.google.com/feeds/list/0AmSovoaAS4VbdHNSeDVKS0RKOXQ0cWw0TUhxM05xQ2c/od6/public/values?alt=json-in-script&callback=?';
+  jQuery.getJSON(url).success(function(data) {
+  spreadsheetLoaded(data);
+}).error(function(message) {
+    console.error('error' + message);
+}).complete(function() {
+    console.log('completed!');
+});
+
 }
 
 function spreadsheetLoaded(dat){
@@ -73,11 +86,13 @@ function createGrid(data){
   for(i=0; i<topCol;i++){
     for(j=0; j<topRow; j++){
       xPos = i*(600/topCol);
-      yPos = j*(300/topRow);
+      yPos = j*(470/topRow);
+      if(j>0) yPos+=30;
       index  = (j*topCol)+(i%topCol);
       value = everything[index].content.$t;
-      radius = value*2;
-      color = "hsla("+(colorSkew*radius)+",70%,60%,1)";
+      radius = value;
+//      color = "hsla("+(colorSkew*radius)+",70%,60%,1)";
+      color = "hsla("+(colorSkew*i)+",70%,60%,1)";
       var num = parseInt(value);
       if (isNaN(num) || value.indexOf("/") !== -1){
         //is a string
@@ -87,7 +102,7 @@ function createGrid(data){
         if (i%2==0){
           drawCircle(xPos+40, yPos, radius,color);
         }else{
-          drawRect(xPos+40, yPos, radius,color);
+          drawRect(xPos, yPos, radius, color);
         }
       }
 
