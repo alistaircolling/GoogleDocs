@@ -1,6 +1,6 @@
 var canvas = document.getElementById('surface');
 var context = canvas.getContext('2d');
-var data;
+var ssdata;
 var font = "Arial";
 var colorSkew = 360/4;
 console.log("hiya");
@@ -19,7 +19,7 @@ function init(){
 }
 
 function addListeners(){
-
+   console.log("addListeners");
    var button = document.getElementById("button");
    // add onclick event
    button.onclick = function() {
@@ -29,23 +29,21 @@ function addListeners(){
 
 function reloadData(){
   console.log("reload data");
-  var url = 'https://spreadsheets.google.com/feeds/list/0AmSovoaAS4VbdHNSeDVKS0RKOXQ0cWw0TUhxM05xQ2c/od6/public/values?alt=json-in-script&callback=?';
+  var url = 'https://spreadsheets.google.com/feeds/cells/0AmSovoaAS4VbdHNSeDVKS0RKOXQ0cWw0TUhxM05xQ2c/od6/public/values?alt=json-in-script&callback=?';
   jQuery.getJSON(url).success(function(data) {
-  spreadsheetLoaded(data);
-}).error(function(message) {
-    console.error('error' + message);
-}).complete(function() {
-    console.log('completed!');
-});
+    console.log("loaded!");
+    spreadsheetLoaded(data);
+  });
 
 }
 
 function spreadsheetLoaded(dat){
   console.log("---SPREADSHEET LOADED---");
   console.log(dat);
-  data = dat;
+  ssdata = dat;
 //  var int=self.setInterval(function(){render()},500);
-  createGrid(dat);
+ // createGrid(dat);
+  loadGoogleAPI();
 
 }
 
@@ -92,7 +90,7 @@ function createGrid(data){
       value = everything[index].content.$t;
       radius = value;
 //      color = "hsla("+(colorSkew*radius)+",70%,60%,1)";
-      color = "hsla("+(colorSkew*i)+",70%,60%,1)";
+      color = "hsla("+(colorSkew*i)+","+(radius*5)+"%,50%,1)";
       var num = parseInt(value);
       if (isNaN(num) || value.indexOf("/") !== -1){
         //is a string
@@ -109,6 +107,47 @@ function createGrid(data){
     }
   }
 }
+function loadGoogleAPI(){
+  console.log("loadGoogleAPI");
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+}
+
+ function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses', 'Eggs'],
+          ['2004',  1000,      400,300],
+          ['2005',  1170,      460,300],
+          ['2006',  660,       1120,300],
+          ['2007',  1030,      540,400]
+        ]);
+   //create 2d array
+   var topRow = parseFloat(ssdata.feed.gs$rowCount.$t);
+   var topCol = parseFloat(ssdata.feed.gs$colCount.$t);
+   var i,j,twoD;
+   for(i=0;i<topRow;i++){
+     var rowArray = [];
+     for(j=0; j<topCol; j++){
+     //  var newNode = ssdata.feed.entry[(i*topCol)+(j%topCol)];
+       var nuNode = ssdata.feed.entry.pop();
+       //console.log("newNode:"+newNode);
+  //     console.log("newNode:"+nuNode);
+
+       rowArray[j] = 1;
+     }
+   }
+
+
+
+   data = google.visualization.arrayToDataTable(ssdata.feed.entry);
+
+        var options = {
+          title: 'Company Performance'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
 init();
 
 
